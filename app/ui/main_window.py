@@ -9,6 +9,7 @@ import customtkinter as ctk
 from app.core.audio_player import AudioPlayer
 from app.core.tts_engine import TTSEngine
 from app.ui.panels.cloning_panel import CloningPanel
+from app.ui.panels.history_panel import HistoryPanel
 from app.ui.panels.settings_panel import SettingsPanel
 from app.ui.panels.tts_panel import TTSPanel
 from app.ui.panels.ultimate_clone_panel import UltimateClonePanel
@@ -21,12 +22,15 @@ from app.utils.constants import (
     MIN_W,
     NAV_ITEMS,
     PANEL_CLONING,
+    PANEL_HISTORY,
     PANEL_SETTINGS,
     PANEL_TTS,
     PANEL_ULTIMATE,
     PANEL_VOICE_DESIGN,
     SIDEBAR_WIDTH,
+    WAV_DIR,
 )
+from app.utils.history_manager import HistoryEntry, HistoryManager
 from app.utils.i18n import t
 
 ctk.set_appearance_mode("Dark")
@@ -58,6 +62,7 @@ class MainWindow(ctk.CTk):
         self._engine = TTSEngine()
         self._player = AudioPlayer()
         self._config = config if config is not None else ConfigManager()
+        self._history = HistoryManager(wav_dir=WAV_DIR)
 
         # ── Layout ────────────────────────────────────────────────────────────
         self.grid_rowconfigure(0, weight=1)
@@ -80,7 +85,7 @@ class MainWindow(ctk.CTk):
         self._sidebar.grid(row=0, column=0, rowspan=1, sticky="nsew")
         self._sidebar.grid_propagate(False)
         self._sidebar.grid_columnconfigure(0, weight=1)
-        self._sidebar.grid_rowconfigure(7, weight=1)   # spacer
+        self._sidebar.grid_rowconfigure(8, weight=1)   # spacer
 
         # App logo / title
         ctk.CTkLabel(
@@ -124,7 +129,7 @@ class MainWindow(ctk.CTk):
             corner_radius=6,
             anchor="w",
         )
-        self._model_badge.grid(row=8, column=0, padx=12, pady=(8, 20), sticky="ew")
+        self._model_badge.grid(row=9, column=0, padx=12, pady=(8, 20), sticky="ew")
 
     # ── Content area ──────────────────────────────────────────────────────────
 
@@ -134,22 +139,34 @@ class MainWindow(ctk.CTk):
         self._content.grid_rowconfigure(0, weight=1)
         self._content.grid_columnconfigure(0, weight=1)
 
-        common = dict(
+        gen_common = dict(
             master=self._content,
             engine=self._engine,
             player=self._player,
             config=self._config,
+            status_cb=self._set_status,
+            history=self._history,
+            on_history_entry=self._on_new_history_entry,
+            fg_color="#1c1c2c",
+            corner_radius=0,
+        )
+
+        self._history_panel = HistoryPanel(
+            master=self._content,
+            history=self._history,
+            player=self._player,
             status_cb=self._set_status,
             fg_color="#1c1c2c",
             corner_radius=0,
         )
 
         self._panels: dict[str, ctk.CTkFrame] = {
-            PANEL_TTS: TTSPanel(**common),
-            PANEL_VOICE_DESIGN: VoiceDesignPanel(**common),
-            PANEL_CLONING: CloningPanel(**common),
-            PANEL_ULTIMATE: UltimateClonePanel(**common),
-            PANEL_SETTINGS: SettingsPanel(
+            PANEL_TTS:          TTSPanel(**gen_common),
+            PANEL_VOICE_DESIGN: VoiceDesignPanel(**gen_common),
+            PANEL_CLONING:      CloningPanel(**gen_common),
+            PANEL_ULTIMATE:     UltimateClonePanel(**gen_common),
+            PANEL_HISTORY:      self._history_panel,
+            PANEL_SETTINGS:     SettingsPanel(
                 master=self._content,
                 engine=self._engine,
                 config=self._config,
@@ -194,6 +211,10 @@ class MainWindow(ctk.CTk):
             else:
                 panel.grid_remove()
 
+        # Refresh history panel whenever it becomes visible
+        if panel_id == PANEL_HISTORY:
+            self._history_panel.refresh()
+
         # Highlight active nav button
         for pid, btn in self._nav_btns.items():
             if pid == panel_id:
@@ -222,6 +243,10 @@ class MainWindow(ctk.CTk):
                 text_color="#888888",
                 fg_color="#252535",
             )
+
+    def _on_new_history_entry(self, entry: HistoryEntry) -> None:
+        """Prepend new entry to the history panel (called on main thread)."""
+        self._history_panel.prepend_entry(entry)
 
     def _on_close(self) -> None:
         """Graceful shutdown: stop playback, save config, destroy window."""

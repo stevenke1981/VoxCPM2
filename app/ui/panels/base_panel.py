@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import logging
 import threading
+from pathlib import Path
 from typing import Callable, Optional
 
 import customtkinter as ctk
@@ -14,7 +16,10 @@ from app.ui.widgets.audio_control_bar import AudioControlBar
 from app.ui.widgets.waveform_canvas import WaveformCanvas
 from app.utils.config_manager import ConfigManager
 from app.utils.constants import WAVEFORM_H
+from app.utils.history_manager import HistoryEntry, HistoryManager
 from app.utils.i18n import t
+
+logger = logging.getLogger(__name__)
 
 
 class GeneratorPanel(ctk.CTkFrame):
@@ -27,8 +32,9 @@ class GeneratorPanel(ctk.CTkFrame):
       :meth:`~app.core.tts_engine.TTSEngine.generate`
 
     The base class provides:
-    - A titled collapsible *input* section
+    - A titled *input* section
     - ▶ Generate button with busy state, progress bar, status label
+    - Auto-save generated audio to the history manager
     - WaveformCanvas (drawn after generation)
     - AudioControlBar (enabled after generation)
     """
@@ -38,19 +44,26 @@ class GeneratorPanel(ctk.CTkFrame):
         master: ctk.CTkBaseClass,
         *,
         title: str,
+        mode: str,
         engine: TTSEngine,
         player: AudioPlayer,
         config: ConfigManager,
         status_cb: Callable[[str], None],
+        history: Optional[HistoryManager] = None,
+        on_history_entry: Optional[Callable[[HistoryEntry], None]] = None,
         **kwargs: object,
     ) -> None:
         super().__init__(master, **kwargs)
         self._title = title
+        self._mode = mode
         self._engine = engine
         self._player = player
         self._config = config
         self._status_cb = status_cb
+        self._history = history
+        self._on_history_entry = on_history_entry
         self._is_generating = False
+        self._last_kwargs: dict = {}
 
         self.grid_columnconfigure(0, weight=1)
 
@@ -148,6 +161,7 @@ class GeneratorPanel(ctk.CTkFrame):
             "inference_timesteps", int(self._config.get("inference_timesteps", 10))
         )
 
+        self._last_kwargs = dict(kwargs)
         self._is_generating = True
         self._gen_btn.configure(state="disabled")
         self._set_status(t("panel.generating"))
@@ -181,6 +195,27 @@ class GeneratorPanel(ctk.CTkFrame):
         self._player.load(wav, sr)
         self._waveform.draw_waveform(wav)
         self._audio_bar.set_has_audio(True)
+
+        # ── Auto-save to history ─────────────────────────────────────────────
+        if self._history is not None:
+            threading.Thread(
+                target=self._save_history,
+                args=(wav, sr),
+                daemon=True,
+                name="HistorySaver",
+            ).start()
+
+    def _save_history(self, wav: np.ndarray, sr: int) -> None:
+        """Run in worker thread — saves WAV and notifies the history panel."""
+        try:
+            text = self._last_kwargs.get("text", "")
+            entry = self._history.save(wav, sr, text, self._mode)  # type: ignore[union-attr]
+            filename = Path(entry.filename).name
+            self.after(0, lambda: self._status_cb(t("history.auto_saved", filename=filename)))
+            if self._on_history_entry:
+                self.after(0, lambda: self._on_history_entry(entry))  # type: ignore[misc]
+        except Exception as exc:  # noqa: BLE001
+            logger.error("History save failed: %s", exc)
 
     def _on_error(self, msg: str) -> None:
         self._is_generating = False

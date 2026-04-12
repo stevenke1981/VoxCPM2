@@ -24,7 +24,11 @@ PANEL_TTS = "tts"
 PANEL_VOICE_DESIGN = "voice_design"
 PANEL_CLONING = "cloning"
 PANEL_ULTIMATE = "ultimate"
+PANEL_HISTORY = "history"
 PANEL_SETTINGS = "settings"
+
+# ─── History WAV output directory ────────────────────────────────────────────
+WAV_DIR = "./wav-files"
 
 # ─── Navigation items (icon, i18n_key, panel_id) ─────────────────────────────
 NAV_ITEMS = [
@@ -32,6 +36,7 @@ NAV_ITEMS = [
     ("🎨", "nav.voice_design", PANEL_VOICE_DESIGN),
     ("🔁", "nav.cloning",      PANEL_CLONING),
     ("⭐", "nav.ultimate",     PANEL_ULTIMATE),
+    ("🕘", "nav.history",      PANEL_HISTORY),
     ("⚙️", "nav.settings",    PANEL_SETTINGS),
 ]
 

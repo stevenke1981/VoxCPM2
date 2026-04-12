@@ -32,6 +32,7 @@ class TTSPanel(GeneratorPanel):
         super().__init__(
             master,
             title=t("tts.title"),
+            mode="tts",
             engine=engine,
             player=player,
             config=config,

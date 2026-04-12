@@ -122,6 +122,30 @@ class AudioPlayer:
             self._thread.join(timeout=2.0)
         self._thread = None
 
+    def load_file(self, path: str) -> None:
+        """
+        Load audio from a WAV file on disk.
+
+        Args:
+            path: Path to a WAV file.
+
+        Raises:
+            FileNotFoundError: File does not exist.
+            RuntimeError:      soundfile is not installed or read fails.
+        """
+        from pathlib import Path as _Path
+
+        if not _Path(path).exists():
+            raise FileNotFoundError(f"Audio file not found: {path}")
+        try:
+            import soundfile as sf  # type: ignore[import]
+
+            wav, sr = sf.read(str(path), dtype="float32", always_2d=False)
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(f"Could not read audio file: {exc}") from exc
+
+        self.load(wav, int(sr))
+
     def save_to_file(self, path: str) -> None:
         """
         Write the loaded audio to *path* as a WAV file.

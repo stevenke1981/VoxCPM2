@@ -46,6 +46,7 @@ class VoiceDesignPanel(GeneratorPanel):
         super().__init__(
             master,
             title=t("vd.title"),
+            mode="voice_design",
             engine=engine,
             player=player,
             config=config,

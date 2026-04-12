@@ -121,6 +121,23 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "audio.save_title":   "儲存音訊",
         "audio.save_error":   "儲存錯誤",
 
+        # History panel
+        "nav.history":              "歷史紀錄",
+        "history.title":            "🕘  歷史紀錄",
+        "history.empty":            "尚無合成紀錄",
+        "history.empty_hint":       "合成音訊後將自動儲存於此",
+        "history.count":            "{n} 筆紀錄",
+        "history.clear_all":        "清除全部",
+        "history.play":             "▶",
+        "history.stop":             "■",
+        "history.delete":           "🗑",
+        "history.mode.tts":         "TTS",
+        "history.mode.voice_design":"聲音設計",
+        "history.mode.clone":       "複製",
+        "history.mode.ultimate":    "極致",
+        "history.auto_saved":       "已自動儲存：{filename}",
+        "history.load_error":       "無法載入音訊：{msg}",
+
         # Dialogs
         "dialog.browse_out":  "選擇輸出目錄",
         "dialog.browse_cache":"選擇模型快取目錄",
@@ -231,6 +248,23 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "audio.duration_val": "Duration: {dur:.2f} s",
         "audio.save_title":   "Save audio",
         "audio.save_error":   "Save error",
+
+        # History panel
+        "nav.history":              "History",
+        "history.title":            "🕘  History",
+        "history.empty":            "No recordings yet",
+        "history.empty_hint":       "Generated audio will appear here automatically",
+        "history.count":            "{n} recording(s)",
+        "history.clear_all":        "Clear All",
+        "history.play":             "▶",
+        "history.stop":             "■",
+        "history.delete":           "🗑",
+        "history.mode.tts":         "TTS",
+        "history.mode.voice_design":"Design",
+        "history.mode.clone":       "Clone",
+        "history.mode.ultimate":    "Ultimate",
+        "history.auto_saved":       "Auto-saved: {filename}",
+        "history.load_error":       "Cannot load audio: {msg}",
 
         # Dialogs
         "dialog.browse_out":  "Select output directory",

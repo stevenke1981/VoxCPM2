@@ -38,6 +38,7 @@ class UltimateClonePanel(GeneratorPanel):
         super().__init__(
             master,
             title=t("ultimate.title"),
+            mode="ultimate",
             engine=engine,
             player=player,
             config=config,

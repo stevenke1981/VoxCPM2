@@ -45,6 +45,7 @@ class CloningPanel(GeneratorPanel):
         super().__init__(
             master,
             title=t("clone.title"),
+            mode="clone",
             engine=engine,
             player=player,
             config=config,

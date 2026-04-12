@@ -25,6 +25,7 @@ PANEL_VOICE_DESIGN = "voice_design"
 PANEL_CLONING = "cloning"
 PANEL_ULTIMATE = "ultimate"
 PANEL_HISTORY = "history"
+PANEL_SRT = "srt"
 PANEL_SETTINGS = "settings"
 
 # ─── History WAV output directory ────────────────────────────────────────────
@@ -37,6 +38,7 @@ NAV_ITEMS = [
     ("🔁", "nav.cloning",      PANEL_CLONING),
     ("⭐", "nav.ultimate",     PANEL_ULTIMATE),
     ("🕘", "nav.history",      PANEL_HISTORY),
+    ("📄", "nav.srt",         PANEL_SRT),
     ("⚙️", "nav.settings",    PANEL_SETTINGS),
 ]
 

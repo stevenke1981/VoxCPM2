@@ -15,12 +15,40 @@ _EXAMPLE_DESC = "A young woman, gentle and sweet voice, speaking in a calm pace"
 _EXAMPLE_TEXT = "Hello! Welcome to VoxCPM2 Studio. How may I assist you today?"
 
 _PRESETS = [
+    # Female voices
     "A young woman, gentle and sweet voice",
+    "A professional female narrator, clear and neutral",
+    "A warm middle-aged woman, soothing and motherly",
+    "An energetic young woman, bright and enthusiastic",
+    "A calm elderly woman, wise and soft-spoken",
+    "A seductive female voice, low and breathy",
+    "A cheerful girl, innocent and lively",
+    "A stern businesswoman, confident and direct",
+    "A whispering female voice, intimate and hushed",
+    "A dramatic female voice, theatrical and expressive",
+    # Male voices
     "A middle-aged man, deep and authoritative tone",
     "An elderly gentleman, warm and reassuring",
     "A cheerful young man, energetic and fast-paced",
-    "A professional female narrator, clear and neutral",
-    "A child, excited and playful",
+    "A baritone male narrator, rich and resonant",
+    "A young man, casual and friendly",
+    "A gruff old man, raspy and weathered",
+    "A news anchor male voice, clear and professional",
+    "A soft-spoken young man, gentle and thoughtful",
+    "A boisterous man, loud and jovial",
+    "A mysterious male voice, low and deliberate",
+    # Multilingual / accented
+    "A Mandarin-accented English speaker, clear enunciation",
+    "A British English accent, polished and refined",
+    "A Southern American drawl, relaxed and warm",
+    "A French-accented English speaker, elegant and musical",
+    "A Japanese-accented voice, precise and polite",
+    # Special / character
+    "A robot voice, slightly metallic and monotone",
+    "An excited sports commentator, fast and dramatic",
+    "A sleepy voice, slow and drowsy",
+    "A storyteller, rich and expressive",
+    "A documentary narrator, calm and authoritative",
 ]
 
 
@@ -82,7 +110,7 @@ class VoiceDesignPanel(GeneratorPanel):
             desc_frame,
             variable=self._preset_var,
             values=_PRESETS,
-            width=160,
+            width=200,
             command=self._on_preset_select,
         )
         preset_menu.grid(row=0, column=1)

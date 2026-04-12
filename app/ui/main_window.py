@@ -11,6 +11,7 @@ from app.core.tts_engine import TTSEngine
 from app.ui.panels.cloning_panel import CloningPanel
 from app.ui.panels.history_panel import HistoryPanel
 from app.ui.panels.settings_panel import SettingsPanel
+from app.ui.panels.srt_panel import SRTPanel
 from app.ui.panels.tts_panel import TTSPanel
 from app.ui.panels.ultimate_clone_panel import UltimateClonePanel
 from app.ui.panels.voice_design_panel import VoiceDesignPanel
@@ -24,6 +25,7 @@ from app.utils.constants import (
     PANEL_CLONING,
     PANEL_HISTORY,
     PANEL_SETTINGS,
+    PANEL_SRT,
     PANEL_TTS,
     PANEL_ULTIMATE,
     PANEL_VOICE_DESIGN,
@@ -85,7 +87,7 @@ class MainWindow(ctk.CTk):
         self._sidebar.grid(row=0, column=0, rowspan=1, sticky="nsew")
         self._sidebar.grid_propagate(False)
         self._sidebar.grid_columnconfigure(0, weight=1)
-        self._sidebar.grid_rowconfigure(8, weight=1)   # spacer
+        self._sidebar.grid_rowconfigure(9, weight=1)   # spacer
 
         # App logo / title
         ctk.CTkLabel(
@@ -129,7 +131,7 @@ class MainWindow(ctk.CTk):
             corner_radius=6,
             anchor="w",
         )
-        self._model_badge.grid(row=9, column=0, padx=12, pady=(8, 20), sticky="ew")
+        self._model_badge.grid(row=10, column=0, padx=12, pady=(8, 20), sticky="ew")
 
     # ── Content area ──────────────────────────────────────────────────────────
 
@@ -166,6 +168,14 @@ class MainWindow(ctk.CTk):
             PANEL_CLONING:      CloningPanel(**gen_common),
             PANEL_ULTIMATE:     UltimateClonePanel(**gen_common),
             PANEL_HISTORY:      self._history_panel,
+            PANEL_SRT:          SRTPanel(
+                master=self._content,
+                engine=self._engine,
+                config=self._config,
+                status_cb=self._set_status,
+                fg_color="#1c1c2c",
+                corner_radius=0,
+            ),
             PANEL_SETTINGS:     SettingsPanel(
                 master=self._content,
                 engine=self._engine,

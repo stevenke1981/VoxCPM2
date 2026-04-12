@@ -68,8 +68,8 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         # TTS panel
         "tts.title":           "🎙️  文字轉語音",
         "tts.input_label":     "待合成文字：",
-        "tts.lang_hint_label": "語言 / 口音提示（可選）：",
-        "tts.lang_hint_tip":   "ℹ️  加入括號提示可引導模型使用指定口音，例如：(普通話) 或 (台灣腔)",
+        "tts.lang_hint_label": "口音 / 性別提示（可選）：",
+        "tts.lang_hint_tip":   "ℹ️  引導發音口音與性別，不改變語言。要說日文請輸入日文字，說中文請輸入中文字。",
         "tts.tip":             "ℹ️  VoxCPM2 自動偵測輸入語言。\n    支援 30 種語言 + 9 種中文方言。",
         "tts.error_empty":     "請輸入待合成的文字。",
 
@@ -128,7 +128,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "srt.title":                "📄  SRT 批次合成",
         "srt.file_label":           "SRT 檔案：",
         "srt.browse":               "瀏覽",
-        "srt.lang_hint_label":      "語言 / 口音提示：",
+        "srt.lang_hint_label":      "口音 / 性別提示：",
         "srt.parse_btn":            "解析 SRT",
         "srt.select_all":           "全選",
         "srt.deselect_all":         "取消全選",
@@ -233,8 +233,8 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         # TTS panel
         "tts.title":           "🎙️  Text-to-Speech",
         "tts.input_label":     "Text to synthesise:",
-        "tts.lang_hint_label": "Language / Accent Hint (optional):",
-        "tts.lang_hint_tip":   "ℹ️  A parenthesis prefix guides the accent, e.g. (Mandarin) or (British English)",
+        "tts.lang_hint_label": "Accent / Gender Hint (optional):",
+        "tts.lang_hint_tip":   "ℹ️  Guides accent & gender only — does NOT change language. Type text in the target language.",
         "tts.tip":             "ℹ️  VoxCPM2 automatically detects the input language.\n    Supports 30 languages + 9 Chinese dialects.",
         "tts.error_empty":     "Please enter text to synthesise.",
 
@@ -293,7 +293,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "srt.title":                "📄  SRT Batch TTS",
         "srt.file_label":           "SRT File:",
         "srt.browse":               "Browse",
-        "srt.lang_hint_label":      "Language / Accent Hint:",
+        "srt.lang_hint_label":      "Accent / Gender Hint:",
         "srt.parse_btn":            "Parse SRT",
         "srt.select_all":           "Select All",
         "srt.deselect_all":         "Deselect All",

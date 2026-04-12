@@ -101,7 +101,12 @@ class TTSEngine:
                 progress_callback, f"Loading {model_name} … (may download ~8 GB on first run)"
             )
 
-            pretrained_kwargs: dict = {"load_denoiser": load_denoiser}
+            pretrained_kwargs: dict = {
+                "load_denoiser": load_denoiser,
+                # optimize=False disables torch.compile and the short-sequence
+                # warmup call that crashes scaled_dot_product_attention.
+                "optimize": False,
+            }
             if cache_dir:
                 resolved = str(Path(cache_dir).resolve())
                 Path(resolved).mkdir(parents=True, exist_ok=True)

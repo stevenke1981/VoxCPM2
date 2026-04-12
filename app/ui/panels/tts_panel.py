@@ -13,9 +13,20 @@ from app.utils.i18n import t
 # Language/accent preset hints — prepended as (hint) before the text
 _LANG_PRESETS = [
     "",                         # none / auto-detect
+    # 標準中文
     "普通話",
     "台灣腔普通話",
     "粵語",
+    # 中文方言
+    "四川話",
+    "吳語",
+    "閩南話",
+    "東北話",
+    "河南話",
+    "陝西話",
+    "山東話",
+    "天津話",
+    # 外語
     "Mandarin",
     "Cantonese",
     "English",

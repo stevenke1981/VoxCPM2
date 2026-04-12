@@ -12,28 +12,43 @@ from app.utils.i18n import t
 
 # Language/accent preset hints — prepended as (hint) before the text
 _LANG_PRESETS = [
-    "",                         # none / auto-detect
-    # 標準中文
-    "普通話",
-    "台灣腔普通話",
-    "粵語",
+    "",                             # none / auto-detect
+    # 普通話（女聲 / 男聲）
+    "女聲普通話",
+    "男聲普通話",
+    "女聲台灣腔普通話",
+    "男聲台灣腔普通話",
+    # 粵語
+    "女聲粵語",
+    "男聲粵語",
     # 中文方言
-    "四川話",
-    "吳語",
-    "閩南話",
-    "東北話",
-    "河南話",
-    "陝西話",
-    "山東話",
-    "天津話",
-    # 外語
-    "Mandarin",
-    "Cantonese",
-    "English",
-    "British English",
-    "American English",
-    "Japanese",
-    "Korean",
+    "女聲四川話",
+    "男聲四川話",
+    "女聲閩南話",
+    "男聲閩南話",
+    "女聲吳語",
+    "男聲吳語",
+    "男聲東北話",
+    "女聲東北話",
+    "男聲河南話",
+    "男聲陝西話",
+    "男聲山東話",
+    "男聲天津話",
+    # 外語（女聲 / 男聲）
+    "female Mandarin",
+    "male Mandarin",
+    "female Cantonese",
+    "male Cantonese",
+    "female English",
+    "male English",
+    "female British English",
+    "male British English",
+    "female American English",
+    "male American English",
+    "female Japanese",
+    "male Japanese",
+    "female Korean",
+    "male Korean",
 ]
 
 

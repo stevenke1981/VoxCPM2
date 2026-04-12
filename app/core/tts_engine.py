@@ -121,11 +121,25 @@ class TTSEngine:
             with self._lock:
                 self._model = model
 
+            # Report active compute device
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    device_name = torch.cuda.get_device_name(0)
+                    device_info = f"GPU · {device_name}"
+                else:
+                    device_info = "CPU"
+            except Exception:  # noqa: BLE001
+                device_info = "unknown device"
+
             self._notify(
                 progress_callback,
-                f"✓ Model ready  |  SR = {self.sample_rate} Hz",
+                f"✓ Model ready  |  SR = {self.sample_rate} Hz  |  {device_info}",
             )
-            logger.info("VoxCPM2 loaded: %s  SR=%d", model_name, self.sample_rate)
+            logger.info(
+                "VoxCPM2 loaded: %s  SR=%d  device=%s",
+                model_name, self.sample_rate, device_info,
+            )
 
         except RuntimeError:
             raise

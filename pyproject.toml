@@ -4,6 +4,8 @@ version = "1.0.0"
 description = "VoxCPM2 TTS Studio — professional text-to-speech GUI"
 requires-python = ">=3.10"
 dependencies = [
+    "torch>=2.4.0",
+    "torchaudio>=2.4.0",
     "voxcpm",
     "customtkinter>=5.2.2",
     "sounddevice>=0.4.6",
@@ -13,15 +15,16 @@ dependencies = [
 
 # ── uv configuration ──────────────────────────────────────────────────────────
 [tool.uv]
-# 這是桌面應用程式，不需要打包成 wheel
+# Desktop app — no wheel packaging needed
 package = false
 
-# PyTorch with CUDA 12.1  (change cu121 → cu118 / cu124 to match your driver)
+# PyTorch with CUDA 12.4  (compatible with driver 550+ / CUDA runtime ≥12.4)
+# Change cu124 → cu121 / cu118 if you need an older toolkit.
 [[tool.uv.index]]
-name     = "pytorch-cu121"
-url      = "https://download.pytorch.org/whl/cu121"
+name     = "pytorch-cu124"
+url      = "https://download.pytorch.org/whl/cu124"
 explicit = true
 
 [tool.uv.sources]
-torch      = { index = "pytorch-cu121" }
-torchaudio = { index = "pytorch-cu121" }
+torch      = { index = "pytorch-cu124" }
+torchaudio = { index = "pytorch-cu124" }

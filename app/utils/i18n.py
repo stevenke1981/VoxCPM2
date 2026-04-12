@@ -66,10 +66,12 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "panel.error_status":       "錯誤：{msg}",
 
         # TTS panel
-        "tts.title":        "🎙️  文字轉語音",
-        "tts.input_label":  "待合成文字：",
-        "tts.tip":          "ℹ️  VoxCPM2 自動偵測輸入語言。\n    支援 30 種語言 + 9 種中文方言。",
-        "tts.error_empty":  "請輸入待合成的文字。",
+        "tts.title":           "🎙️  文字轉語音",
+        "tts.input_label":     "待合成文字：",
+        "tts.lang_hint_label": "語言 / 口音提示（可選）：",
+        "tts.lang_hint_tip":   "ℹ️  加入括號提示可引導模型使用指定口音，例如：(普通話) 或 (台灣腔)",
+        "tts.tip":             "ℹ️  VoxCPM2 自動偵測輸入語言。\n    支援 30 種語言 + 9 種中文方言。",
+        "tts.error_empty":     "請輸入待合成的文字。",
 
         # Voice Design panel
         "vd.title":           "🎨  聲音設計",
@@ -90,7 +92,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "clone.ref_tip":          "ℹ️  任何乾淨的 WAV 檔案（5–30 秒）效果均佳。",
         "clone.style_label":      "風格控制（可選）：",
         "clone.style_examples":   "範例 …",
-        "clone.style_placeholder":"例如：（稍快，愉悅音調）",
+        "clone.style_placeholder":"例如：普通話  或  (稍快，愉悅音調)",
         "clone.text_label":       "待合成文字：",
         "clone.error_no_ref":     "請選擇參考音訊檔案。",
         "clone.error_no_text":    "請輸入待合成的文字。",
@@ -194,10 +196,12 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "panel.error_status":       "Error: {msg}",
 
         # TTS panel
-        "tts.title":        "🎙️  Text-to-Speech",
-        "tts.input_label":  "Text to synthesise:",
-        "tts.tip":          "ℹ️  VoxCPM2 automatically detects the input language.\n    Supports 30 languages + 9 Chinese dialects.",
-        "tts.error_empty":  "Please enter text to synthesise.",
+        "tts.title":           "🎙️  Text-to-Speech",
+        "tts.input_label":     "Text to synthesise:",
+        "tts.lang_hint_label": "Language / Accent Hint (optional):",
+        "tts.lang_hint_tip":   "ℹ️  A parenthesis prefix guides the accent, e.g. (Mandarin) or (British English)",
+        "tts.tip":             "ℹ️  VoxCPM2 automatically detects the input language.\n    Supports 30 languages + 9 Chinese dialects.",
+        "tts.error_empty":     "Please enter text to synthesise.",
 
         # Voice Design panel
         "vd.title":           "🎨  Voice Design",
@@ -218,7 +222,7 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "clone.ref_tip":          "ℹ️  Any clean WAV file (5–30 s) works well.",
         "clone.style_label":      "Style Control  (optional):",
         "clone.style_examples":   "Examples …",
-        "clone.style_placeholder":"e.g.  (slightly faster, cheerful tone)",
+        "clone.style_placeholder":"e.g.  Mandarin  or  (slightly faster, cheerful tone)",
         "clone.text_label":       "Text to Synthesise:",
         "clone.error_no_ref":     "Please select a reference audio file.",
         "clone.error_no_text":    "Please enter text to synthesise.",

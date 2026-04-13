@@ -69,10 +69,13 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
 
         # TTS panel
         "tts.title":           "🎙️  文字轉語音",
-        "tts.input_label":     "待合成文字：",
         "tts.lang_hint_label": "口音 / 性別提示（可選）：",
         "tts.lang_hint_tip":   "ℹ️  引導發音口音與性別，不改變語言。要說日文請輸入日文字，說中文請輸入中文字。",
-        "tts.tip":             "ℹ️  VoxCPM2 自動偵測輸入語言。\n    支援 30 種語言 + 9 種中文方言。",
+        "tts.input_label":      "待合成文字：",
+        "tts.translated_label": "翻譯後文字（合成用）：",
+        "tts.copy_btn":         "複製",
+        "tts.copied":           "已複製翻譯文字",
+        "tts.tip":             "ℹ️  VoxCPM2 自動偵測輸入語言。支援 30 種語言 + 9 種中文方言。",
         "tts.error_empty":     "請輸入待合成的文字。",
 
         # Voice Design panel
@@ -236,10 +239,13 @@ _TRANSLATIONS: Dict[str, Dict[str, str]] = {
 
         # TTS panel
         "tts.title":           "🎙️  Text-to-Speech",
-        "tts.input_label":     "Text to synthesise:",
         "tts.lang_hint_label": "Accent / Gender Hint (optional):",
         "tts.lang_hint_tip":   "ℹ️  Guides accent & gender only — does NOT change language. Type text in the target language.",
-        "tts.tip":             "ℹ️  VoxCPM2 automatically detects the input language.\n    Supports 30 languages + 9 Chinese dialects.",
+        "tts.input_label":      "Text to synthesise:",
+        "tts.translated_label": "Translated text (for synthesis):",
+        "tts.copy_btn":         "Copy",
+        "tts.copied":           "Translated text copied",
+        "tts.tip":             "ℹ️  VoxCPM2 automatically detects the input language. Supports 30 languages + 9 Chinese dialects.",
         "tts.error_empty":     "Please enter text to synthesise.",
 
         # Voice Design panel

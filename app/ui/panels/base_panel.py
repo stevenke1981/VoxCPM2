@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import logging
+import math
 import threading
+import time
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -64,6 +66,8 @@ class GeneratorPanel(ctk.CTkFrame):
         self._on_history_entry = on_history_entry
         self._is_generating = False
         self._last_kwargs: dict = {}
+        self._anim_running = False
+        self._anim_start: float = 0.0
 
         self.grid_columnconfigure(0, weight=1)
 
@@ -165,7 +169,7 @@ class GeneratorPanel(ctk.CTkFrame):
         self._is_generating = True
         self._gen_btn.configure(state="disabled")
         self._set_status(t("panel.generating"))
-        self._progress.set(0.35)
+        self._start_progress_animation()
 
         threading.Thread(
             target=self._worker,
@@ -184,6 +188,7 @@ class GeneratorPanel(ctk.CTkFrame):
 
     def _on_done(self, wav: np.ndarray) -> None:
         self._is_generating = False
+        self._anim_running = False
         self._gen_btn.configure(state="normal")
         self._progress.set(1.0)
 
@@ -219,10 +224,29 @@ class GeneratorPanel(ctk.CTkFrame):
 
     def _on_error(self, msg: str) -> None:
         self._is_generating = False
+        self._anim_running = False
         self._gen_btn.configure(state="normal")
         self._progress.set(0)
         self._set_status(f"✗  {msg}", error=True)
         self._status_cb(t("panel.error_status", msg=msg))
+
+    # ── Progress animation ────────────────────────────────────────────────────
+
+    def _start_progress_animation(self) -> None:
+        """Start an asymptotic progress animation toward ~0.92 while generating."""
+        self._progress.set(0)
+        self._anim_running = True
+        self._anim_start = time.monotonic()
+        self._animate_progress()
+
+    def _animate_progress(self) -> None:
+        if not self._anim_running:
+            return
+        elapsed = time.monotonic() - self._anim_start
+        # Exponential approach to 0.92 with ~25 s time-constant → feels responsive
+        value = 0.92 * (1.0 - math.exp(-elapsed / 25.0))
+        self._progress.set(value)
+        self.after(120, self._animate_progress)
 
     # ── Helpers ───────────────────────────────────────────────────────────────
 

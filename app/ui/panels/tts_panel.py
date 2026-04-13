@@ -105,9 +105,6 @@ class TTSPanel(GeneratorPanel):
             anchor="w",
         ).grid(row=2, column=0, padx=24, pady=(0, 8), sticky="w")
 
-        # Initialise visibility
-        self._on_preset_select("女聲普通話")
-
         # ── Two-column text area ──────────────────────────────────────────────
         cols = ctk.CTkFrame(f, fg_color="transparent")
         cols.grid(row=3, column=0, padx=24, pady=(0, 0), sticky="ew")
@@ -155,6 +152,9 @@ class TTSPanel(GeneratorPanel):
             text_color="#667788",
             justify="left", anchor="w",
         ).grid(row=4, column=0, padx=24, pady=(8, 4), sticky="w")
+
+        # Initialise preset visibility AFTER _translated is created
+        self._on_preset_select("女聲普通話")
 
     # ── Preset / translate UI ─────────────────────────────────────────────────
 

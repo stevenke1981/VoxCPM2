@@ -19,49 +19,16 @@ from app.utils.config_manager import ConfigManager
 from app.utils.constants import WAV_DIR
 from app.utils.i18n import t
 from app.utils.srt_parser import SRTEntry, load_srt, ms_to_filename_part
+from app.utils.translator import (
+    PRESET_MAP,
+    apply_preset,
+    needs_translation,
+    target_lang_display,
+)
 
 logger = logging.getLogger(__name__)
 
-# Language / accent presets (same as TTS panel)
-_LANG_PRESETS = [
-    "",                             # none / auto-detect
-    # 普通話（女聲 / 男聲）
-    "女聲普通話",
-    "男聲普通話",
-    "女聲台灣腔普通話",
-    "男聲台灣腔普通話",
-    # 粵語
-    "女聲粵語",
-    "男聲粵語",
-    # 中文方言
-    "女聲四川話",
-    "男聲四川話",
-    "女聲閩南話",
-    "男聲閩南話",
-    "女聲吳語",
-    "男聲吳語",
-    "男聲東北話",
-    "女聲東北話",
-    "男聲河南話",
-    "男聲陝西話",
-    "男聲山東話",
-    "男聲天津話",
-    # 外語（女聲 / 男聲）
-    "female Mandarin",
-    "male Mandarin",
-    "female Cantonese",
-    "male Cantonese",
-    "female English",
-    "male English",
-    "female British English",
-    "male British English",
-    "female American English",
-    "male American English",
-    "female Japanese",
-    "male Japanese",
-    "female Korean",
-    "male Korean",
-]
+_LANG_PRESETS = list(PRESET_MAP.keys())
 
 # Colour map for status badges
 _STATUS_COLOURS = {
@@ -165,7 +132,7 @@ class SRTPanel(ctk.CTkFrame):
             command=self._browse_srt,
         ).grid(row=0, column=1)
 
-        # ── Language / accent hint ────────────────────────────────────────────
+        # ── Accent / gender preset ────────────────────────────────────────────
         ctk.CTkLabel(
             top, text=t("srt.lang_hint_label"),
             font=ctk.CTkFont(size=13), anchor="w",
@@ -173,23 +140,33 @@ class SRTPanel(ctk.CTkFrame):
 
         hint_row = ctk.CTkFrame(top, fg_color="transparent")
         hint_row.grid(row=1, column=1, columnspan=2, pady=(4, 4), sticky="ew")
-        hint_row.grid_columnconfigure(0, weight=1)
+        hint_row.grid_columnconfigure(0, weight=0)
 
-        self._lang_hint = ctk.CTkEntry(
-            hint_row, height=34, font=ctk.CTkFont(size=12),
-            placeholder_text="普通話  /  Mandarin  /  留空則自動偵測",
-        )
-        self._lang_hint.grid(row=0, column=0, sticky="ew", padx=(0, 8))
-        self._lang_hint.insert(0, "普通話")
-
-        self._preset_var = ctk.StringVar(value="▾")
-        ctk.CTkComboBox(
+        self._preset_var = ctk.StringVar(value="女聲普通話")
+        self._preset_box = ctk.CTkComboBox(
             hint_row,
             variable=self._preset_var,
-            values=_LANG_PRESETS,
-            width=140,
+            values=[""] + _LANG_PRESETS,
+            width=220,
             command=self._on_preset_select,
-        ).grid(row=0, column=1)
+        )
+        self._preset_box.grid(row=0, column=0, padx=(0, 10))
+
+        # Auto-translate toggle (shown for foreign-language presets only)
+        self._translate_var = ctk.BooleanVar(value=True)
+        self._translate_chk = ctk.CTkCheckBox(
+            hint_row, variable=self._translate_var, text="",
+            width=20, checkbox_width=18, checkbox_height=18,
+        )
+        self._translate_chk.grid(row=0, column=1, padx=(0, 4))
+
+        self._translate_lbl = ctk.CTkLabel(
+            hint_row, text="",
+            font=ctk.CTkFont(size=12), text_color="#4e9af1", anchor="w",
+        )
+        self._translate_lbl.grid(row=0, column=2, sticky="w")
+
+        self._on_preset_select("女聲普通話")
 
         # ── Parse button ──────────────────────────────────────────────────────
         self._parse_btn = ctk.CTkButton(
@@ -303,8 +280,16 @@ class SRTPanel(ctk.CTkFrame):
             self._file_entry.insert(0, path)
 
     def _on_preset_select(self, value: str) -> None:
-        self._lang_hint.delete(0, "end")
-        self._lang_hint.insert(0, value)
+        self._preset_var.set(value)
+        if needs_translation(value):
+            lang = target_lang_display(value)
+            self._translate_lbl.configure(text=f"自動翻譯為 {lang}")
+            self._translate_chk.grid()
+            self._translate_lbl.grid()
+        else:
+            self._translate_lbl.configure(text="")
+            self._translate_chk.grid_remove()
+            self._translate_lbl.grid_remove()
 
     def _parse_srt(self) -> None:
         path = self._file_entry.get().strip()
@@ -457,7 +442,8 @@ class SRTPanel(ctk.CTkFrame):
 
     def _synthesis_worker(self, rows: List[_EntryRow]) -> None:
         total = len(rows)
-        lang_hint = self._lang_hint.get().strip()
+        preset = self._preset_var.get().strip()
+        translate_on = self._translate_var.get()
 
         cfg_value = float(self._config.get("cfg_value", 2.0))
         steps = int(self._config.get("inference_timesteps", 10))
@@ -478,9 +464,9 @@ class SRTPanel(ctk.CTkFrame):
             self.after(0, lambda v=(i / total): self._progress.set(v))
 
             try:
-                text = row.entry.text
-                if lang_hint:
-                    text = f"({lang_hint}){text}"
+                text = apply_preset(
+                    row.entry.text, preset, translate_enabled=translate_on
+                )
 
                 wav = self._engine.generate(
                     text=text,

@@ -147,7 +147,7 @@ class SRTPanel(ctk.CTkFrame):
             hint_row,
             variable=self._preset_var,
             values=[""] + _LANG_PRESETS,
-            width=220,
+            width=200,
             command=self._on_preset_select,
         )
         self._preset_box.grid(row=0, column=0, padx=(0, 10))
@@ -441,12 +441,20 @@ class SRTPanel(ctk.CTkFrame):
         ).start()
 
     def _synthesis_worker(self, rows: List[_EntryRow]) -> None:
+        from app.utils.translator import check_network
+
         total = len(rows)
         preset = self._preset_var.get().strip()
         translate_on = self._translate_var.get()
 
         cfg_value = float(self._config.get("cfg_value", 2.0))
         steps = int(self._config.get("inference_timesteps", 10))
+
+        # Pre-check network if translation will be required
+        if translate_on and needs_translation(preset) and not check_network():
+            self.after(0, lambda: self._status_cb("需要網路連線才能翻譯"))
+            self.after(0, self._on_synthesis_done)
+            return
 
         for i, row in enumerate(rows):
             if self._stop_flag.is_set():
@@ -483,6 +491,14 @@ class SRTPanel(ctk.CTkFrame):
                 self.after(0, lambda r=row: r.status_lbl.configure(
                     text=t("srt.status_done"),
                     text_color=_STATUS_COLOURS["done"],
+                ))
+            except ConnectionError as exc:
+                # Network unavailable mid-batch — abort remaining entries
+                self.after(0, lambda: self._status_cb(str(exc)))
+                self._stop_flag.set()
+                self.after(0, lambda r=row: r.status_lbl.configure(
+                    text="需要網路連線",
+                    text_color=_STATUS_COLOURS["error"],
                 ))
             except Exception as exc:  # noqa: BLE001
                 logger.error("SRT entry %d synthesis failed: %s", row.entry.index, exc)

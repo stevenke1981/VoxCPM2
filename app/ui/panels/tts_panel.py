@@ -68,7 +68,7 @@ class TTSPanel(GeneratorPanel):
             hint_row,
             variable=self._preset_var,
             values=[""] + _LANG_PRESETS,
-            width=220,
+            width=200,
             command=self._on_preset_select,
         )
         self._preset_box.grid(row=0, column=0, sticky="w")
@@ -135,7 +135,10 @@ class TTSPanel(GeneratorPanel):
 
         preset = self._preset_var.get().strip()
         translate_on = self._translate_var.get()
-        text = apply_preset(text, preset, translate_enabled=translate_on)
+        try:
+            text = apply_preset(text, preset, translate_enabled=translate_on)
+        except ConnectionError as exc:
+            raise ValueError(str(exc)) from exc
 
         return {"text": text}
 

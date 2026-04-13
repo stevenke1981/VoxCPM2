@@ -30,28 +30,33 @@ PRESET_MAP: dict[str, tuple[str, str | None]] = {
     "男聲陝西話":          ("男聲陝西話",         None),
     "男聲山東話":          ("男聲山東話",         None),
     "男聲天津話":          ("男聲天津話",         None),
-    # ── 外語（需翻譯）────────────────────────────────────────────────────────
-    "female Mandarin":          ("female Mandarin",        "zh-CN"),
-    "male Mandarin":            ("male Mandarin",          "zh-CN"),
-    "female Cantonese":         ("female Cantonese",       "zh-CN"),
-    "male Cantonese":           ("male Cantonese",         "zh-CN"),
-    "female English":           ("female English",         "en"),
-    "male English":             ("male English",           "en"),
-    "female British English":   ("female British English", "en"),
-    "male British English":     ("male British English",   "en"),
-    "female American English":  ("female American English","en"),
-    "male American English":    ("male American English",  "en"),
-    "female Japanese":          ("female Japanese",        "ja"),
-    "male Japanese":            ("male Japanese",          "ja"),
-    "female Korean":            ("female Korean",          "ko"),
-    "male Korean":              ("male Korean",            "ko"),
+    # ── 外語（需翻譯，使用中文標籤）──────────────────────────────────────────
+    "女聲英語":            ("female English",         "en"),
+    "男聲英語":            ("male English",           "en"),
+    "女聲英式英語":        ("female British English", "en"),
+    "男聲英式英語":        ("male British English",   "en"),
+    "女聲美式英語":        ("female American English","en"),
+    "男聲美式英語":        ("male American English",  "en"),
+    "女聲日語":            ("female Japanese",        "ja"),
+    "男聲日語":            ("male Japanese",          "ja"),
+    "女聲韓語":            ("female Korean",          "ko"),
+    "男聲韓語":            ("male Korean",            "ko"),
+    "女聲法語":            ("female French",          "fr"),
+    "男聲法語":            ("male French",            "fr"),
+    "女聲德語":            ("female German",          "de"),
+    "男聲德語":            ("male German",            "de"),
+    "女聲西班牙語":        ("female Spanish",         "es"),
+    "男聲西班牙語":        ("male Spanish",           "es"),
 }
 
 # Friendly display names for target languages
 LANG_DISPLAY: dict[str, str] = {
-    "en":    "English",
+    "en":    "英語",
     "ja":    "日語",
     "ko":    "韓語",
+    "fr":    "法語",
+    "de":    "德語",
+    "es":    "西班牙語",
     "zh-CN": "中文（簡體）",
 }
 
@@ -70,6 +75,18 @@ def target_lang_display(preset: str) -> str:
     return LANG_DISPLAY.get(info[1], info[1])
 
 
+def check_network(host: str = "8.8.8.8", port: int = 53, timeout: float = 3.0) -> bool:
+    """Return True if the network is reachable (DNS port on Google)."""
+    import socket
+    try:
+        socket.setdefaulttimeout(timeout)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((host, port))
+        return True
+    except OSError:
+        return False
+
+
 def translate(text: str, target_lang: str) -> str:
     """
     Translate *text* to *target_lang* using Google Translate (via deep-translator).
@@ -79,17 +96,24 @@ def translate(text: str, target_lang: str) -> str:
         target_lang: ISO 639-1 / BCP-47 code, e.g. ``"ja"``, ``"en"``, ``"ko"``.
 
     Returns:
-        Translated string, or the original text if translation fails.
+        Translated string.
+
+    Raises:
+        ConnectionError: No network connection available.
     """
+    if not check_network():
+        raise ConnectionError("需要網路連線才能翻譯")
     try:
         from deep_translator import GoogleTranslator  # type: ignore[import]
 
         result: str = GoogleTranslator(source="auto", target=target_lang).translate(text)
         logger.info("Translated to %s: %r → %r", target_lang, text[:60], result[:60])
         return result
+    except ConnectionError:
+        raise
     except Exception as exc:  # noqa: BLE001
-        logger.warning("Translation failed (%s), using original text: %s", exc, text[:60])
-        return text
+        logger.warning("Translation failed (%s)", exc)
+        raise ConnectionError("需要網路連線才能翻譯") from exc
 
 
 def apply_preset(text: str, preset: str, *, translate_enabled: bool = True) -> str:

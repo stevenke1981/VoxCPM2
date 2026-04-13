@@ -129,6 +129,19 @@ class SettingsPanel(ctk.CTkFrame):
             text=t("settings.denoiser"),
             variable=self._denoiser_var,
             font=ctk.CTkFont(size=12),
+        ).grid(row=row, column=0, padx=24, pady=(0, 4), sticky="w")
+        row += 1
+
+        # Auto-load on startup checkbox
+        self._auto_load_var = ctk.BooleanVar(
+            value=bool(self._config.get("auto_load_model", False))
+        )
+        ctk.CTkCheckBox(
+            self,
+            text=t("settings.auto_load_model"),
+            variable=self._auto_load_var,
+            font=ctk.CTkFont(size=12),
+            command=self._on_auto_load_change,
         ).grid(row=row, column=0, padx=24, pady=(0, 8), sticky="w")
         row += 1
 
@@ -394,6 +407,14 @@ class SettingsPanel(ctk.CTkFrame):
             self._out_entry.delete(0, "end")
             self._out_entry.insert(0, path)
             self._config.set("output_dir", path)
+
+    def _on_auto_load_change(self) -> None:
+        self._config.set("auto_load_model", self._auto_load_var.get())
+
+    def trigger_auto_load(self) -> None:
+        """Called by MainWindow on startup when auto_load_model is enabled."""
+        if not self._engine.is_loaded and not self._is_loading:
+            self._on_load()
 
     def _on_language_change(self, display_value: str) -> None:
         # Map display label back to locale code

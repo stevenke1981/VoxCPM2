@@ -80,6 +80,10 @@ class MainWindow(ctk.CTk):
         self._show_panel(PANEL_TTS)
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
+        # ── Auto-load model if enabled ────────────────────────────────────────
+        if self._config.get("auto_load_model", False):
+            self.after(500, self._panels[PANEL_SETTINGS].trigger_auto_load)  # type: ignore[attr-defined]
+
     # ── Sidebar ───────────────────────────────────────────────────────────────
 
     def _build_sidebar(self) -> None:

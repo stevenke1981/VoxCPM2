@@ -27,6 +27,7 @@ _DEFAULTS: dict[str, Any] = {
     "output_dir": "./output",
     "volume": DEFAULT_VOLUME,
     "language": "zh-TW",
+    "auto_load_model": False,
 }
 
 
